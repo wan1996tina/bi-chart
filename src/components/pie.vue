@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     storeChartData () {
-      const data = this.$store.getters.getChartData
+      const data = this.$store.getters.getSports
       const x = []
       const y = []
       for (const i in data) {

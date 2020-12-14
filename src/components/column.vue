@@ -3,7 +3,7 @@
   h3 This is the column chart title
   button(@click="change()") change data
   .svg-wraper
-    svg.column_content.base-bar-chart
+    svg.column_content
 </template>
 
 <script>
@@ -40,14 +40,30 @@ export default {
       bgColor: '#ffd'
     }
   },
+  created () {
+    // alert(this.chartData)
+  },
+  watch: {
+    chartData: {
+      hanlder: {
+        function () {
+          this.getprops()
+        }
+      }
+    }
+  },
   mounted () {
-    const data = this.$store.getters.get2
+    // const data = this.$store.getters.getEnt
+    const data = this.chartData
+    // console.log(this.chartData + '11111111111111111')
     const x = []
     const y = []
     for (const d in data) {
       x.push(data[d])
       y.push(d)
     }
+    // console.log(x, y)
+
     this.bindData = { x, y }
     // *虛擬外部資料，要改成用 props 帶進來 o
     // 存進 vuex
@@ -59,7 +75,7 @@ export default {
     // 取資料
     storeChartData () {
       // 處理資料，變成有 2 個陣列的物件
-      const data = this.$store.getters.getChartData
+      const data = this.$store.getters.getSports
       const x = []
       const y = []
       for (const d in data) {
@@ -70,8 +86,11 @@ export default {
     }
   },
   methods: {
+    getprops () {
+      console.log(123)
+    },
     change () {
-      const data = this.$store.getters.getChartData
+      const data = this.$store.getters.getSports
       const x = []
       const y = []
       for (const d in data) {

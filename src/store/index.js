@@ -46,10 +46,10 @@ export default new Vuex.Store({
   modules: {
   },
   getters: {
-    getChartData (state) {
+    getSports (state) {
       return state.sports
     },
-    get2 (state) {
+    getEnt (state) {
       return state.entertainment
     },
     getBreakfast (state) {
