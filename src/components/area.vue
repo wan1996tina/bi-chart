@@ -73,7 +73,7 @@ export default {
         .domain([Ymin, Ymax])
         .range([h, 0])
 
-      // line func，來把資料轉為 x, y
+      // line func，把資料轉為 x, y
       const line = d3.line()
         .x(function (d, i) {
           return xScale(i + 1)
@@ -90,7 +90,7 @@ export default {
         .attr('stroke', 'gray')
         .attr('stroke-linejoin', 'round')
         .attr('stroke-linecap', 'round')
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1)
         .attr('d', line)
 
       const area = d3.area()
@@ -102,7 +102,7 @@ export default {
       grp.append('path')
         .attr('d', area(dataset))
         .attr('stroke', 'none')
-        .attr('fill', 'rgba(200,200,200,.5)')
+        .attr('fill', '#ffd5cd')
 
       // 設置畫線動畫
       const pathLength = path.node().getTotalLength()
@@ -155,7 +155,7 @@ export default {
 
 <style>
 .area {
-  background: #e9d2d2;
+  background: #fcf1f1;
   margin: 15px auto;
   padding: 10px 0;
   width: 100%;

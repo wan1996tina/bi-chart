@@ -19,6 +19,11 @@
   //- updateTest
   //- axisTest
   areaChart
+  stackedBar
+  //- csvFormat
+  stack
+  bubble
+  scatter
 </template>
 
 <script>
@@ -27,8 +32,14 @@ import column from '@/components/column'
 import pie from '@/components/pie'
 import lineChart from '@/components/line'
 import areaChart from '@/components/area'
+import stackedBar from '@/components/stackedBar'
+import bubble from '@/components/bubble'
+import scatter from '@/components/scatter'
+
 import updateTest from '@/components/update-test'
 import axisTest from '@/components/axis-test'
+import csvFormat from '@/components/csv-format'
+import stack from '@/components/stack'
 
 export default {
   name: 'Home',
@@ -39,7 +50,12 @@ export default {
     lineChart,
     updateTest,
     axisTest,
-    areaChart
+    areaChart,
+    stackedBar,
+    csvFormat,
+    stack,
+    bubble,
+    scatter
   },
   data () {
     return {
@@ -48,8 +64,9 @@ export default {
   },
   computed: {
   },
-  mounted () {
+  created () {
     this.data = this.$store.getters.getSports
+    console.log('home created', this.data)
   },
   methods: {
     onChange (e) {

@@ -134,7 +134,7 @@ export default {
         .data(dataset)
         .enter()
         .append('circle')
-        .attr('fill', '#4b731c')
+        .attr('fill', '#8db596')
         .attr('stroke', 'none')
         .attr('cx', function (d, i) { return xScale(i + 1) })
         .attr('cy', function (d) { return yScale(d) })
@@ -147,7 +147,7 @@ export default {
 
 <style>
 .line {
-  background: #a8d274;
+  background: #dff3e3;
   margin: 15px auto;
   padding: 10px 0;
   width: 100%;
@@ -167,7 +167,7 @@ export default {
 
 .line_content .grp path {
   stroke: #a8d274;
-  stroke-width: 1;
+  stroke-width: 3.5;
   fill: none;
 }
 .axis {

@@ -1,7 +1,7 @@
 <template lang="pug">
 .column
   h3 This is the column chart title
-  button(@click="change()") change data
+  //- button(@click="change()") change data
   .svg-wraper
     svg.column_content
 </template>
@@ -41,28 +41,23 @@ export default {
     }
   },
   created () {
-    // alert(this.chartData)
   },
   watch: {
-    chartData: {
-      hanlder: {
-        function () {
-          this.getprops()
-        }
-      }
+    chartData () {
+      console.log('column watch', this.chartData)
+      this.change(this.chartData)
     }
   },
   mounted () {
     // const data = this.$store.getters.getEnt
     const data = this.chartData
-    // console.log(this.chartData + '11111111111111111')
+    console.log('column mounted', this.chartData)
     const x = []
     const y = []
     for (const d in data) {
       x.push(data[d])
       y.push(d)
     }
-    // console.log(x, y)
 
     this.bindData = { x, y }
     // *虛擬外部資料，要改成用 props 帶進來 o
@@ -86,11 +81,10 @@ export default {
     }
   },
   methods: {
-    getprops () {
-      console.log(123)
-    },
-    change () {
-      const data = this.$store.getters.getSports
+    change (d) {
+      console.log('data has been changed!')
+      // const data = this.$store.getters.getSports
+      const data = d
       const x = []
       const y = []
       for (const d in data) {
@@ -118,7 +112,7 @@ export default {
         .duration(1000)
         .attr('width', xScale)
         .attr('height', barHeight - 2)
-        .attr('fill', 'white')
+        .attr('fill', '#e5d8bf')
 
       dataEnter
         .append('rect')
@@ -126,7 +120,7 @@ export default {
         .duration(1000)
         .attr('width', xScale)
         .attr('height', barHeight - 2)
-        .attr('fill', 'white')
+        .attr('fill', '#e5d8bf')
 
       dataExit
         .transition()
@@ -160,6 +154,44 @@ export default {
         .transition()
         .duration(1000)
         .remove()
+
+      // y 軸
+      const yAxisUpdate = d3.select('.column_content')
+        .select('.y-axis')
+        .selectAll('text')
+        .data(newData.y)
+      const yAxisEnter = yAxisUpdate.enter()
+      const yAxisExit = yAxisUpdate.exit()
+
+      yAxisUpdate
+        .transition()
+        .duration(1000)
+        .text(function (d) { return d })
+
+      yAxisEnter
+        .append('text')
+        .attr('x', 0)
+        .attr('y', function (d, i) { return i * 35 })
+        .attr('dy', '0.3em')
+        .attr('fill', '#666')
+        .style('font-size', '14px')
+        .text(function (d) { return d })
+
+      yAxisExit
+        .transition()
+        .duration(1000)
+        .remove()
+
+      // x 軸
+      const xAxis = d3
+        .axisBottom(xScale)
+        .ticks(15)
+
+      d3.select('.column_content')
+        .select('.x-axis')
+        .transition()
+        .duration(1000)
+        .call(xAxis)
     },
     renderData (data) {
       const chartData = data.x
@@ -181,7 +213,7 @@ export default {
       d3.select('.column_content').append('rect')
         .attr('width', width + 30)
         .attr('height', height)
-        .attr('fill', '#efefef')
+        .attr('fill', '#fff')
 
       // XY軸線
       d3.select('.column_content').append('polyline')
@@ -201,7 +233,7 @@ export default {
       g.append('rect')
         .attr('width', xScale)
         .attr('height', barHeight - 2)
-        .attr('fill', 'white')
+        .attr('fill', '#e5d8bf')
       // - 新增 label 文字
       g.append('text')
         .attr('x', function (d) { return xScale(d) + 6 })
@@ -246,19 +278,33 @@ export default {
           .text(i)
       }
 
+      // d3 x 軸
+      const xAxis = d3
+        .axisBottom(xScale)
+        .ticks(15)
+
+      chartSvg.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', 'translate(80,' + height * 0.9 + ')')
+        .call(xAxis)
+
       // Y軸 項目名稱
       const yAxis = chartSvg.append('g')
-        .attr('transform', 'translate(40, 88)')
+        .attr('transform', 'translate(30, 88)')
+        .attr('class', 'y-axis')
 
-      for (let i = 0; i < data.y.length; i++) {
-        yAxis.append('text')
-          .attr('x', 0)
-          .attr('y', i * 35)
-          .attr('dy', '0.3em')
-          .attr('fill', '#666')
-          .style('font-size', '14px')
-          .text(data.y[i])
-      }
+      // for (let i = 0; i < data.y.length; i++) {
+      yAxis.selectAll('g')
+        .data(data.y)
+        .enter()
+        .append('text')
+        .attr('x', 0)
+        .attr('y', function (d, i) { return i * 35 })
+        .attr('dy', '0.3em')
+        .attr('fill', '#666')
+        .style('font-size', '14px')
+        .text(function (d, i) { return data.y[i] })
+      // }
     }
   }
 }
@@ -266,7 +312,7 @@ export default {
 
 <style>
 .column {
-  background: lightblue;
+  background: #efe9cc;
   margin: 15px auto;
   padding: 10px 0;
   width: 100%;

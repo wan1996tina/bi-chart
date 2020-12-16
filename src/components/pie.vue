@@ -32,7 +32,7 @@ export default {
       const index = this.storeChartData.y
       const width = this.width
       const height = this.height
-
+      console.log('pie', data, index)
       // 背景色塊
       d3.select('.pie_content').append('rect')
         .attr('width', width + 30)
@@ -49,6 +49,14 @@ export default {
 
       const color = d3.scaleOrdinal(['#fce4a6', '#fbdc88', '#fbd163', '#f9c435', '#f8b90d'])
 
+      const interpolateRgb = d3.interpolateRgb('#fce4a6', '#f8b90d')
+
+      const colorLinear = d3.scaleLinear()
+        .domain([0, index.length - 1])
+        .range([0, 1])
+
+      console.log(interpolateRgb(colorLinear(4))) // #994d77
+
       const pie = d3.pie()
 
       const arc = d3.arc()
@@ -63,7 +71,8 @@ export default {
 
       arcs.append('path')
         .attr('fill', function (d, i) {
-          return color(i)
+          // return color(i)
+          return interpolateRgb(colorLinear(parseInt(i)))
         })
         .attr('d', arc)
 
