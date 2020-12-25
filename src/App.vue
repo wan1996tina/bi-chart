@@ -4,7 +4,10 @@
     router-link(to='/') Home
     | |
     router-link(to='/about') About
-  router-view.
+    | |
+    router-link(to='/anim') Animation
+  keep-alive
+    router-view.
 
 </template>
 

@@ -1,0 +1,31 @@
+﻿categorie,value,rate
+Student,0,Not at all
+Student,4,Not very much
+Student,12,Medium
+Student,6,Very much
+Student,0,Tremendously
+Liberal Profession,1,Not at all
+Liberal Profession,21,Not very much
+Liberal Profession,13,Medium
+Liberal Profession,18,Very much
+Liberal Profession,6,Tremendously
+Salaried Staff,3,Not at all
+Salaried Staff,22,Not very much
+Salaried Staff,6,Medium
+Salaried Staff,15,Very much
+Salaried Staff,3,Tremendously
+Employee,12,Not at all
+Employee,7,Not very much
+Employee,18,Medium
+Employee,13,Very much
+Employee,6,Tremendously
+Craftsman,6,Not at all
+Craftsman,15,Not very much
+Craftsman,9,Medium
+Craftsman,12,Very much
+Craftsman,3,Tremendously
+Inactive,6,Not at all
+Inactive,6,Not very much
+Inactive,6,Medium
+Inactive,2,Very much
+Inactive,3,Tremendously

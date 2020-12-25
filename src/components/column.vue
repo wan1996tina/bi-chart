@@ -1,310 +1,81 @@
 <template lang="pug">
 .column
-  h3 This is the column chart title
-  //- button(@click="change()") change data
-  .svg-wraper
-    svg.column_content
+  h3 column chart title
+  .svg-wrapper
+    svg.column_content(ref="content")
 </template>
-
 <script>
 import * as d3 from 'd3'
-
 export default {
   props: {
     chartData: Object
   },
   data () {
     return {
-      columnData: {
-        爬山: 1,
-        慢跑: 5,
-        游泳: 3,
-        羽球: 7,
-        快走: 9,
-        排球: 6,
-        健身: 15
-      },
-      columnData2: {
-        看書: 5,
-        滑手機: 15,
-        聚餐: 6,
-        購物: 3,
-        聽音樂: 22,
-        逛夜市: 2,
-        遛狗: 28
-      },
-      bindData: {},
       width: 650,
-      height: 400,
-      barHeight: 20,
-      bgColor: '#ffd'
-    }
-  },
-  created () {
-  },
-  watch: {
-    chartData () {
-      console.log('column watch', this.chartData)
-      this.change(this.chartData)
+      height: 400
     }
   },
   mounted () {
-    // const data = this.$store.getters.getEnt
-    const data = this.chartData
-    console.log('column mounted', this.chartData)
-    const x = []
-    const y = []
-    for (const d in data) {
-      x.push(data[d])
-      y.push(d)
-    }
-
-    this.bindData = { x, y }
-    // *虛擬外部資料，要改成用 props 帶進來 o
-    // 存進 vuex
-    // this.$store.commit('addData', this.chartData)
-    // 呼叫畫圖表 func，帶入取來的資料
-    this.renderData(this.bindData)
-  },
-  computed: {
-    // 取資料
-    storeChartData () {
-      // 處理資料，變成有 2 個陣列的物件
-      const data = this.$store.getters.getSports
-      const x = []
-      const y = []
-      for (const d in data) {
-        x.push(data[d])
-        y.push(d)
-      }
-      return { x, y }
-    }
+    this.chart(this.chartData)
   },
   methods: {
-    change (d) {
-      console.log('data has been changed!')
-      // const data = this.$store.getters.getSports
-      const data = d
-      const x = []
-      const y = []
-      for (const d in data) {
-        x.push(data[d])
-        y.push(d)
-      }
+    chart (data) {
+      const margin = { top: 50, left: 30, right: 30, bottom: 50 }
+      const w = this.width
+      const h = this.height
 
-      // 更換、新增、刪除 圖表色塊
-      const newData = { x, y }
-      const dataUpdate = d3.select('.column_content')
-        .selectAll('.xAxis')
-        .select('rect')
-        .data(newData.x)
-      const dataEnter = dataUpdate.enter()
-      const dataExit = dataUpdate.exit()
+      const svg = d3.select(this.$refs.content)
+        .attr('width', w + margin.left + margin.right)
+        .attr('height', h + margin.top + margin.bottom)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-      const width = this.width
-      const barHeight = this.barHeight
-      const xScale = d3.scaleLinear()
-        .domain([0, d3.max(newData.x)])
-        .range([0, width * 0.8])
+      svg.append('rect')
+        .attr('width', w)
+        .attr('height', h)
+        .style('fill', '#fff')
 
-      dataUpdate
-        .transition()
-        .duration(1000)
-        .attr('width', xScale)
-        .attr('height', barHeight - 2)
-        .attr('fill', '#e5d8bf')
+      const keys = Object.keys(data)
+      const values = Object.values(data)
 
-      dataEnter
-        .append('rect')
-        .transition()
-        .duration(1000)
-        .attr('width', xScale)
-        .attr('height', barHeight - 2)
-        .attr('fill', '#e5d8bf')
+      const xScale = d3.scaleBand()
+        .domain(keys)
+        .range([0, w])
+        .padding(0.4)
+      svg.append('g')
+        .attr('transform', `translate(0, ${h})`)
+        .call(d3.axisBottom(xScale))
 
-      dataExit
-        .transition()
-        .duration(1000)
-        .remove()
+      const yScale = d3.scaleLinear()
+        .domain([0, 16])
+        .range([h, 0])
+      svg.append('g')
+        .call(d3.axisLeft(yScale))
 
-      // 更換、新增、刪除 圖表文字
-      const textUpdate = d3.select('.column_content')
-        .selectAll('.xAxis')
-        .select('text')
-        .data(newData.x)
-      const textEnter = dataUpdate.enter()
-      const textExit = dataUpdate.exit()
+      const y = d3.scaleLinear()
+        .domain([16, 0])
+        .range([h, 0])
 
-      textUpdate
-        .transition()
-        .duration(1000)
-        .attr('x', function (d) { return xScale(d) + 6 })
-        .text(function (d) { return d + '天' })
+      const x = d3.scaleBand()
+        .domain(d3.range(values.length))
+        .range([0, w])
+        .padding(0.4)
+        .align(0.5)
 
-      textEnter
-        .append('text')
-        .attr('x', function (d) { return xScale(d) + 6 })
-        .attr('y', barHeight - 10)
-        .attr('dy', '0.3em')
-        .attr('fill', '#666')
-        .style('font-size', '14px')
-        .text(function (d) { return d + '天' })
-
-      textExit
-        .transition()
-        .duration(1000)
-        .remove()
-
-      // y 軸
-      const yAxisUpdate = d3.select('.column_content')
-        .select('.y-axis')
-        .selectAll('text')
-        .data(newData.y)
-      const yAxisEnter = yAxisUpdate.enter()
-      const yAxisExit = yAxisUpdate.exit()
-
-      yAxisUpdate
-        .transition()
-        .duration(1000)
-        .text(function (d) { return d })
-
-      yAxisEnter
-        .append('text')
-        .attr('x', 0)
-        .attr('y', function (d, i) { return i * 35 })
-        .attr('dy', '0.3em')
-        .attr('fill', '#666')
-        .style('font-size', '14px')
-        .text(function (d) { return d })
-
-      yAxisExit
-        .transition()
-        .duration(1000)
-        .remove()
-
-      // x 軸
-      const xAxis = d3
-        .axisBottom(xScale)
-        .ticks(15)
-
-      d3.select('.column_content')
-        .select('.x-axis')
-        .transition()
-        .duration(1000)
-        .call(xAxis)
-    },
-    renderData (data) {
-      const chartData = data.x
-      const width = this.width
-      const height = this.height
-      const barHeight = this.barHeight
-
-      // 整個圖表區域
-      const chartSvg = d3.select('.column_content')
-        .attr('width', width + 30)
-        .attr('height', height)
-
-      // 計算比例尺
-      const xScale = d3.scaleLinear()
-        .domain([0, d3.max(chartData)])
-        .range([0, width * 0.8])
-
-      // 背景色塊
-      d3.select('.column_content').append('rect')
-        .attr('width', width + 30)
-        .attr('height', height)
-        .attr('fill', '#fff')
-
-      // XY軸線
-      d3.select('.column_content').append('polyline')
-        .style('stroke', 'black')
-        .style('fill', 'none')
-        .attr('points', `80, 70, 80, ${height - 80}, ${90 + width * 0.8}, ${height - 80}`)
-
-      // 資料內容 > 矩形和 label 文字組合的容器
-      const g = chartSvg.selectAll('g')
-        .data(chartData)
+      const g = svg.append('g')
+        .selectAll('g')
+        .data(values)
         .enter()
         .append('g')
-        .attr('transform', function (d, i) { return 'translate(81,' + (i * (barHeight + 15) + 80) + ')' })
-        .attr('class', 'xAxis')
+        .attr('transform', function (d, i) { return `translate(${x(i)} ,${h - y(d)})` })
 
-      // - 新增矩形 (視覺化資料)
       g.append('rect')
-        .attr('width', xScale)
-        .attr('height', barHeight - 2)
-        .attr('fill', '#e5d8bf')
-      // - 新增 label 文字
-      g.append('text')
-        .attr('x', function (d) { return xScale(d) + 6 })
-        .attr('y', barHeight - 10)
-        .attr('dy', '0.3em')
-        .attr('fill', '#666')
-        .style('font-size', '14px')
-        .text(function (d) { return d + '天' })
-
-      // 資料間隔線
-      const lines = chartSvg.append('g')
-        .attr('transform', 'translate(80, 70)')
-
-      let j = 0
-      for (let i = 0; i < 7; i++) {
-        lines.append('line')
-          .attr('x1', 0)
-          .attr('y1', j)
-          .attr('x2', width * 0.8 + 10)
-          .attr('y2', j)
-          .style('stroke', '#ccc')
-        j += 35
-      }
-
-      // X軸 對照參考線、數值
-      const refe = chartSvg.append('g')
-        .attr('transform', `translate(80, ${height - 80})`)
-      const unit = (width - 130) / d3.max(chartData)
-      for (let i = 1; i <= d3.max(chartData); i++) {
-        refe.append('line')
-          .attr('x1', i * unit)
-          .attr('y1', 1)
-          .attr('x2', i * unit)
-          .attr('y2', 12)
-          .style('stroke', '#999')
-        refe.append('text')
-          .attr('x', i * unit - 4)
-          .attr('y', 25)
-          .attr('dy', '0.3em')
-          .attr('fill', '#666')
-          .style('font-size', '14px')
-          .text(i)
-      }
-
-      // d3 x 軸
-      const xAxis = d3
-        .axisBottom(xScale)
-        .ticks(15)
-
-      chartSvg.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', 'translate(80,' + height * 0.9 + ')')
-        .call(xAxis)
-
-      // Y軸 項目名稱
-      const yAxis = chartSvg.append('g')
-        .attr('transform', 'translate(30, 88)')
-        .attr('class', 'y-axis')
-
-      // for (let i = 0; i < data.y.length; i++) {
-      yAxis.selectAll('g')
-        .data(data.y)
-        .enter()
-        .append('text')
-        .attr('x', 0)
-        .attr('y', function (d, i) { return i * 35 })
-        .attr('dy', '0.3em')
-        .attr('fill', '#666')
-        .style('font-size', '14px')
-        .text(function (d, i) { return data.y[i] })
-      // }
+        .attr('width', x.bandwidth())
+        .attr('height', function (d) {
+          return y(d)
+        })
+        .style('fill', '#5c6e91')
     }
   }
 }
@@ -312,7 +83,7 @@ export default {
 
 <style>
 .column {
-  background: #efe9cc;
+  background: #eeeeee;
   margin: 15px auto;
   padding: 10px 0;
   width: 100%;

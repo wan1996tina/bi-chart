@@ -2,7 +2,7 @@
 .pie
   h3 This is the pie chart title
   .svg-wraper
-    svg.pie_content
+    svg.pie_content(ref="pie")
 </template>
 
 <script>
@@ -13,6 +13,8 @@ export default {
       width: 650,
       height: 400
     }
+  },
+  created () {
   },
   computed: {
     storeChartData () {
@@ -32,7 +34,6 @@ export default {
       const index = this.storeChartData.y
       const width = this.width
       const height = this.height
-      console.log('pie', data, index)
       // 背景色塊
       d3.select('.pie_content').append('rect')
         .attr('width', width + 30)
@@ -54,8 +55,6 @@ export default {
       const colorLinear = d3.scaleLinear()
         .domain([0, index.length - 1])
         .range([0, 1])
-
-      console.log(interpolateRgb(colorLinear(4))) // #994d77
 
       const pie = d3.pie()
 
